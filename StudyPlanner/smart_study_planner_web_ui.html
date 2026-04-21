@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Study Planner</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #0f172a, #111827 45%, #0b1220);
+      color: #f8fafc;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+      line-height: 1.65;
+      max-width: 760px;
+    }
+
+    .hero-note {
+      margin-top: 14px;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.12);
+      color: #bfdbfe;
+      font-size: 0.9rem;
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: rgba(31, 41, 55, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .panel h2 {
+      margin-bottom: 16px;
+      font-size: 1.2rem;
+    }
+
+    .section-title {
+      margin: 18px 0 12px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #93c5fd;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      color: #dbeafe;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 14px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.18s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .task-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-left: 6px solid #60a5fa;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+    }
+
+    .task-card.done-card {
+      opacity: 0.88;
+      border-left-color: #10b981;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task-title {
+      font-size: 1.06rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .task-subtitle {
+      color: #93c5fd;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .task-meta {
+      color: #cbd5e1;
+      font-size: 0.93rem;
+      line-height: 1.6;
+    }
+
+    .task-actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .critical { background: #7f1d1d; color: #fecaca; }
+    .high { background: #78350f; color: #fde68a; }
+    .medium { background: #1e3a8a; color: #bfdbfe; }
+    .low { background: #14532d; color: #bbf7d0; }
+    .done { background: #065f46; color: #d1fae5; }
+    .overdue { background: #7c2d12; color: #fed7aa; }
+    .missed { background: #991b1b; color: #fee2e2; }
+
+    .hint {
+      font-size: 0.86rem;
+      color: #94a3b8;
+      margin-top: 10px;
+      line-height: 1.55;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 34px 22px;
+      color: #94a3b8;
+      border: 1px dashed #475569;
+      border-radius: 20px;
+      background: rgba(15, 23, 42, 0.88);
+    }
+
+    .message-box {
+      margin-top: 14px;
+      min-height: 48px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      color: #dbeafe;
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Smart Study Planner</h1>
+      <p>
+        Your smart assistant for organizing tasks, tracking deadlines, and staying on top of your studies.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Add a New Plan</h2>
+
+        <div class="form-group">
+          <label for="taskName">Task Name</label>
+          <input id="taskName" type="text" placeholder="ex. Adv Comprog Final" />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label for="taskType">Type</label>
+            <select id="taskType">
+              <option value="1">Exam</option>
+              <option value="2">Quiz</option>
+              <option value="3">Assignment</option>
+              <option value="4">Meeting</option>
+              <option value="5">Project</option>
+              <option value="6">Presentation</option>
+              <option value="7">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input id="deadline" type="date" />
+          </div>
+        </div>
+
+        <div id="academicSection">
+          <div class="section-title">Academic task settings</div>
+
+          <div class="form-group">
+            <label for="wantCourseCode">Do you want to add course code?</label>
+            <select id="wantCourseCode">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+
+          <div id="courseCodeBlock" class="hidden">
+            <div id="noSavedCodesBlock" class="form-group hidden">
+              <label for="newCourseCodeOnly">No saved subjects yet. Enter new course code</label>
+              <input id="newCourseCodeOnly" type="text" placeholder="ex. 2190103" />
+            </div>
+
+            <div id="savedCodesFlow" class="hidden">
+              <div class="form-group">
+                <label for="isNewSubject">Is this a new subject?</label>
+                <select id="isNewSubject">
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </div>
+
+              <div id="chooseSavedCodeBlock" class="form-group">
+                <label for="savedCourseCode">Choose subject</label>
+                <select id="savedCourseCode"></select>
+              </div>
+
+              <div id="newCourseCodeBlock" class="form-group hidden">
+                <label for="newCourseCode">Enter new course code</label>
+                <input id="newCourseCode" type="text" placeholder="ex. 2182204" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="assignmentSection" class="hidden">
+          <div class="section-title">Assignment settings</div>
+          <div class="form-group">
+            <label for="lateAllowed">Is late submission allowed?</label>
+            <select id="lateAllowed">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="meetingSection" class="hidden">
+          <div class="section-title">Meeting settings</div>
+          <div class="row">
+            <div class="form-group">
+              <label for="meetingLocation">Location</label>
+              <input id="meetingLocation" type="text" placeholder="ex. Chulaphat 14" />
+            </div>
+            <div class="form-group">
+              <label for="mandatory">Is it mandatory?</label>
+              <select id="mandatory">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="projectSection" class="hidden">
+          <div class="section-title">Project settings</div>
+          <div class="form-group">
+            <label for="progress">Current progress percentage (0-100)</label>
+            <input id="progress" type="number" min="0" max="100" value="0" />
+          </div>
+        </div>
+
+        <div id="presentationSection" class="hidden">
+          <div class="section-title">Presentation settings</div>
+          <div class="row">
+            <div class="form-group">
+              <label for="presentationLocation">Location</label>
+              <input id="presentationLocation" type="text" placeholder="ex. Room 402" />
+            </div>
+            <div class="form-group">
+              <label for="audience">Audience</label>
+              <input id="audience" type="text" placeholder="ex. Professor and classmates" />
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="addTask()">+ Add Task</button>
+
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <h2>Your Plans</h2>
+          <div class="toolbar-group">
+            <button class="btn btn-secondary" onclick="renderTasks()">Refresh View</button>
+            <button class="btn btn-danger" onclick="clearFinishedTasks()">Clear Finished</button>
+          </div>
+        </div>
+
+        <div id="taskList" class="task-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const TYPE_NAMES = {
+      1: "Exam",
+      2: "Quiz",
+      3: "Assignment",
+      4: "Meeting",
+      5: "Project",
+      6: "Presentation",
+      7: "Other"
+    };
+
+    const tasks = [
+      createTaskObject({
+        type: 5,
+        name: "Adv Comprog Project",
+        deadline: "2026-04-27",
+        courseCode: "2190103",
+        progressPercent: 50
+      }),
+      createTaskObject({
+        type: 1,
+        name: "SLS Finals",
+        deadline: "2026-04-29",
+        courseCode: "2182204"
+      }),
+      createTaskObject({
+        type: 4,
+        name: "Club Meeting",
+        deadline: "2026-04-30",
+        location: "Chulaphat 14",
+        mandatory: true
+      })
+    ];
+
+    const taskTypeEl = document.getElementById("taskType");
+    const wantCourseCodeEl = document.getElementById("wantCourseCode");
+    const isNewSubjectEl = document.getElementById("isNewSubject");
+
+    taskTypeEl.addEventListener("change", updateDynamicForm);
+    wantCourseCodeEl.addEventListener("change", updateCourseCodeFlow);
+    isNewSubjectEl.addEventListener("change", updateCourseCodeFlow);
+
+    function todayString() {
+      const today = new Date();
+      return today.toISOString().split("T")[0];
+    }
+
+    function parseDateOnly(dateString) {
+      const [year, month, day] = dateString.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    function daysUntil(dateString) {
+      const today = parseDateOnly(todayString());
+      const deadline = parseDateOnly(dateString);
+      const diff = deadline - today;
+      return Math.round(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function isAcademicType(type) {
+      return type === 1 || type === 2 || type === 3 || type === 5;
+    }
+
+    function getSavedCourseCodes() {
+      const seen = new Set();
+      const codes = [];
+
+      tasks.forEach(task => {
+        if (isAcademicType(task.type) && task.courseCode && !seen.has(task.courseCode)) {
+          seen.add(task.courseCode);
+          codes.push(task.courseCode);
+        }
+      });
+
+      return codes;
+    }
+
+    function createTaskObject({
+      type,
+      name,
+      deadline,
+      courseCode = "",
+      lateSubmissionAllowed = false,
+      location = "",
+      mandatory = false,
+      progressPercent = 0,
+      audience = "",
+      isDone = false,
+      completedDate = null
+    }) {
+      return {
+        type,
+        typeName: TYPE_NAMES[type] || "Other",
+        name,
+        deadline,
+        courseCode: (courseCode || "").trim(),
+        lateSubmissionAllowed,
+        location: (location || "").trim(),
+        mandatory,
+        progressPercent: Math.max(0, Math.min(100, Number(progressPercent) || 0)),
+        audience: (audience || "").trim(),
+        isDone,
+        completedDate
+      };
+    }
+
+    function getPriority(task) {
+      const daysLeft = daysUntil(task.deadline);
+
+      switch (task.type) {
+        case 1: // Exam
+          if (daysLeft < 0) return 1;
+          if (daysLeft <= 2) return 1;
+          if (daysLeft <= 5) return 2;
+          return 3;
+
+        case 2: // Quiz
+          if (daysLeft < 0) return 1;
+          if (daysLeft <= 1) return 1;
+          if (daysLeft <= 3) return 2;
+          return 3;
+
+        case 3: // Assignment
+          if (daysLeft < 0) return task.lateSubmissionAllowed ? 3 : 1;
+          if (daysLeft <= 1) return 1;
+          if (daysLeft <= 3) return 2;
+          return 3;
+
+        case 4: // Meeting
+          if (task.mandatory) {
+            if (daysLeft < 0) return 1;
+            if (daysLeft <= 1) return 1;
+            if (daysLeft <= 3) return 2;
+            return 3;
+          }
+          if (daysLeft <= 1) return 2;
+          return 4;
+
+        case 5: // Project
+          if (daysLeft < 0) return 1;
+          if (daysLeft <= 3) {
+            if (task.progressPercent < 50) return 1;
+            if (task.progressPercent < 80) return 2;
+            return 3;
+          }
+          if (daysLeft <= 7) {
+            if (task.progressPercent < 30) return 1;
+            if (task.progressPercent < 70) return 2;
+            return 3;
+          }
+          if (task.progressPercent < 20) return 2;
+          return 4;
+
+        case 6: // Presentation
+          if (daysLeft < 0) return 1;
+          if (daysLeft <= 2) return 1;
+          if (daysLeft <= 5) return 2;
+          return 3;
+
+        default: // Task base class
+          if (daysLeft < 0) return 1;
+          if (daysLeft <= 1) return 2;
+          if (daysLeft <= 3) return 3;
+          return 5;
+      }
+    }
+
+    function getUrgencyLevel(task) {
+      const daysLeft = daysUntil(task.deadline);
+
+      if (task.type === 1) {
+        if (daysLeft < 0) return "MISSED";
+        if (daysLeft <= 2) return "CRITICAL";
+        if (daysLeft <= 5) return "HIGH";
+        return "MEDIUM";
+      }
+
+      if (task.type === 5) {
+        if (daysLeft < 0) return "OVERDUE";
+        if (daysLeft <= 3 && task.progressPercent < 50) return "CRITICAL";
+        if (daysLeft <= 7 && task.progressPercent < 70) return "HIGH";
+        if (task.progressPercent < 100) return "MEDIUM";
+        return "LOW";
+      }
+
+      if (daysLeft < 0) return "OVERDUE";
+      if (daysLeft <= 1) return "CRITICAL";
+      if (daysLeft <= 3) return "HIGH";
+      if (daysLeft <= 7) return "MEDIUM";
+      return "LOW";
+    }
+
+    function getStatus(task) {
+      const today = todayString();
+
+      if (task.type === 1 && !task.isDone && task.deadline < today) {
+        return "MISSED EXAM!";
+      }
+
+      if (task.type === 3 && !task.isDone && task.deadline < today) {
+        return task.lateSubmissionAllowed ? "Late submission allowed" : "Missed assignment";
+      }
+
+      if (task.type === 4 && !task.isDone && task.deadline < today && task.mandatory) {
+        return "Missed mandatory meeting";
+      }
+
+      if (!task.isDone) {
+        if (task.deadline < today) {
+          return "Not accomplished on time";
+        }
+        return "In Progress";
+      }
+
+      if (task.completedDate && task.completedDate > task.deadline) {
+        return "Done late";
+      }
+
+      return "Done";
+    }
+
+    function getReminderMessage(task) {
+      if (task.type === 1) {
+        return task.isDone ? "Exam already completed." : "Revise key topics before the exam.";
+      }
+
+      if (task.type === 2) {
+        return task.isDone ? "Quiz already completed." : "Do a quick review before the quiz.";
+      }
+
+      if (task.type === 3) {
+        if (task.isDone) return "Assignment already completed.";
+        return task.lateSubmissionAllowed
+          ? "Complete and submit before scores deduction."
+          : "Finish the assignment before the deadline.";
+      }
+
+      if (task.type === 4) {
+        if (task.isDone) return "Meeting already completed.";
+        return task.mandatory
+          ? "Mandatory meeting coming up. Be prepared."
+          : "Optional meeting scheduled.";
+      }
+
+      if (task.type === 5) {
+        if (task.isDone) return "Project already completed.";
+        if (task.progressPercent < 50) return "Project progress is low. Work on key parts now.";
+        if (task.progressPercent < 80) return "Keep pushing the project toward completion.";
+        return "Project is close to done. Finalize the remaining work.";
+      }
+
+      if (task.type === 6) {
+        return task.isDone ? "Presentation already completed." : "Practice your delivery and prepare your slides.";
+      }
+
+      if (task.isDone) return "Already completed.";
+      if (task.deadline < todayString()) return "This task is overdue.";
+      return "Stay on track.";
+    }
+
+    function getCompletionMessage(task) {
+      switch (task.type) {
+        case 1: return "Exam marked as completed.";
+        case 2: return "Quiz marked as completed.";
+        case 3: return "Assignment submitted.";
+        case 4: return "Meeting attended.";
+        case 5: return "Project milestone completed.";
+        case 6: return "Presentation completed.";
+        default: return "Task completed.";
+      }
+    }
+
+    function getExtraDetails(task) {
+      switch (task.type) {
+        case 1:
+        case 2:
+          return `Course: ${task.courseCode || "-"}`;
+        case 3:
+          return `Course: ${task.courseCode || "-"}, Late allowed: ${task.lateSubmissionAllowed ? "Yes" : "No"}`;
+        case 4:
+          return `Location: ${task.location || "-"}, Mandatory: ${task.mandatory ? "Yes" : "No"}`;
+        case 5:
+          return `Course: ${task.courseCode || "-"}, Progress: ${task.progressPercent}%`;
+        case 6:
+          return `Location: ${task.location || "-"}, Audience: ${task.audience || "-"}`;
+        default:
+          return "-";
+      }
+    }
+
+    function canBeRemoved(task) {
+      return getStatus(task) === "In Progress";
+    }
+
+    function getBadgeClass(urgency) {
+      const map = {
+        CRITICAL: "critical",
+        HIGH: "high",
+        MEDIUM: "medium",
+        LOW: "low",
+        DONE: "done",
+        OVERDUE: "overdue",
+        MISSED: "missed"
+      };
+      return map[urgency] || "medium";
+    }
+
+    function setMessage(text) {
+      document.getElementById("messageBox").textContent = text;
+    }
+
+    function populateSavedCourseCodeDropdown() {
+      const dropdown = document.getElementById("savedCourseCode");
+      dropdown.innerHTML = "";
+
+      getSavedCourseCodes().forEach(code => {
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = code;
+        dropdown.appendChild(option);
+      });
+    }
+
+    function updateCourseCodeFlow() {
+      const selectedType = Number(taskTypeEl.value);
+      const academic = isAcademicType(selectedType);
+
+      document.getElementById("academicSection").classList.toggle("hidden", !academic);
+      if (!academic) return;
+
+      const wantsCode = wantCourseCodeEl.value === "yes";
+      const savedCodes = getSavedCourseCodes();
+
+      document.getElementById("courseCodeBlock").classList.toggle("hidden", !wantsCode);
+      document.getElementById("noSavedCodesBlock").classList.toggle("hidden", !(wantsCode && savedCodes.length === 0));
+      document.getElementById("savedCodesFlow").classList.toggle("hidden", !(wantsCode && savedCodes.length > 0));
+
+      if (savedCodes.length > 0) {
+        populateSavedCourseCodeDropdown();
+      }
+
+      const newSubject = isNewSubjectEl.value === "yes";
+      document.getElementById("chooseSavedCodeBlock").classList.toggle("hidden", newSubject || savedCodes.length === 0);
+      document.getElementById("newCourseCodeBlock").classList.toggle("hidden", !newSubject || savedCodes.length === 0);
+    }
+
+    function updateDynamicForm() {
+      const type = Number(taskTypeEl.value);
+
+      document.getElementById("academicSection").classList.toggle("hidden", !isAcademicType(type));
+      document.getElementById("assignmentSection").classList.toggle("hidden", type !== 3);
+      document.getElementById("meetingSection").classList.toggle("hidden", type !== 4);
+      document.getElementById("projectSection").classList.toggle("hidden", type !== 5);
+      document.getElementById("presentationSection").classList.toggle("hidden", type !== 6);
+
+      updateCourseCodeFlow();
+
+      const typeName = TYPE_NAMES[type];
+    }
+
+    function getSelectedCourseCode() {
+      const type = Number(taskTypeEl.value);
+      if (!isAcademicType(type)) return "";
+      if (wantCourseCodeEl.value !== "yes") return "";
+
+      const savedCodes = getSavedCourseCodes();
+      if (savedCodes.length === 0) {
+        return document.getElementById("newCourseCodeOnly").value.trim();
+      }
+
+      const newSubject = isNewSubjectEl.value === "yes";
+      if (newSubject) {
+        return document.getElementById("newCourseCode").value.trim();
+      }
+
+      return document.getElementById("savedCourseCode").value.trim();
+    }
+
+    function sortTasks() {
+      tasks.sort((a, b) => {
+        const dateCompare = parseDateOnly(a.deadline) - parseDateOnly(b.deadline);
+        if (dateCompare !== 0) return dateCompare;
+        return getPriority(a) - getPriority(b);
+      });
+    }
+
+    function renderTasks() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      if (tasks.length === 0) {
+        taskList.innerHTML = `
+          <div class="empty-state">
+            <h3>No tasks yet</h3>
+            <p>Your planner is looking suspiciously peaceful. Add something academic before the illusion breaks.</p>
+          </div>
+        `;
+        updateCourseCodeFlow();
+        return;
+      }
+
+      sortTasks();
+
+      tasks.forEach((task, index) => {
+        const status = getStatus(task);
+        const urgency = getUrgencyLevel(task);
+        const badgeClass = getBadgeClass(urgency);
+        const taskCard = document.createElement("div");
+
+        taskCard.className = `task-card ${task.isDone ? "done-card" : ""}`;
+
+        const removeDisabled = !canBeRemoved(task);
+        const doneDisabled = task.isDone;
+
+        taskCard.innerHTML = `
+          <div class="task-top">
+            <div>
+              <div class="task-title">[${index}] ${task.name}</div>
+              <div class="task-subtitle">${task.typeName} • Deadline: ${task.deadline}</div>
+              <div class="task-meta">
+                Status: ${status}<br>
+                Urgency: ${urgency}<br>
+                ${getExtraDetails(task)}<br>
+                Reminder: ${getReminderMessage(task)}
+              </div>
+            </div>
+            <span class="badge ${badgeClass}">${urgency}</span>
+          </div>
+          <div class="task-actions">
+            <button class="btn btn-success" onclick="markDone(${index})" ${doneDisabled ? "disabled" : ""}>Mark Done</button>
+            <button class="btn btn-danger" onclick="removeTask(${index})">Remove</button>
+          </div>
+        `;
+
+        taskList.appendChild(taskCard);
+      });
+
+      updateCourseCodeFlow();
+    }
+
+    function addTask() {
+      const type = Number(taskTypeEl.value);
+      const name = document.getElementById("taskName").value.trim();
+      const deadline = document.getElementById("deadline").value;
+
+      if (!name) {
+        setMessage("Task name cannot be empty.");
+        return;
+      }
+
+      if (!deadline) {
+        setMessage("Please enter a valid deadline.");
+        return;
+      }
+
+      const courseCode = getSelectedCourseCode();
+      const lateSubmissionAllowed = document.getElementById("lateAllowed").value === "yes";
+      const meetingLocation = document.getElementById("meetingLocation").value.trim();
+      const mandatory = document.getElementById("mandatory").value === "yes";
+      const progressPercent = Number(document.getElementById("progress").value);
+      const presentationLocation = document.getElementById("presentationLocation").value.trim();
+      const audience = document.getElementById("audience").value.trim();
+
+      if (type === 5 && (Number.isNaN(progressPercent) || progressPercent < 0 || progressPercent > 100)) {
+        setMessage("Progress must be between 0 and 100.");
+        return;
+      }
+
+      const task = createTaskObject({
+        type,
+        name,
+        deadline,
+        courseCode,
+        lateSubmissionAllowed: type === 3 ? lateSubmissionAllowed : false,
+        location: type === 4 ? meetingLocation : type === 6 ? presentationLocation : "",
+        mandatory: type === 4 ? mandatory : false,
+        progressPercent: type === 5 ? progressPercent : 0,
+        audience: type === 6 ? audience : ""
+      });
+
+      tasks.push(task);
+      clearForm();
+      renderTasks();
+      setMessage("Task added successfully.");
+    }
+
+    function clearForm() {
+      document.getElementById("taskName").value = "";
+      document.getElementById("deadline").value = "";
+      document.getElementById("wantCourseCode").value = "no";
+      document.getElementById("newCourseCodeOnly").value = "";
+      document.getElementById("isNewSubject").value = "no";
+      document.getElementById("newCourseCode").value = "";
+      document.getElementById("lateAllowed").value = "no";
+      document.getElementById("meetingLocation").value = "";
+      document.getElementById("mandatory").value = "no";
+      document.getElementById("progress").value = 0;
+      document.getElementById("presentationLocation").value = "";
+      document.getElementById("audience").value = "";
+      document.getElementById("taskType").value = "1";
+      updateDynamicForm();
+    }
+
+    function markDone(index) {
+      const task = tasks[index];
+      if (!task) {
+        setMessage("Invalid index.");
+        return;
+      }
+
+      if (task.isDone) {
+        setMessage("Task is already done.");
+        return;
+      }
+
+      task.isDone = true;
+      task.completedDate = todayString();
+      renderTasks();
+      setMessage(`${getCompletionMessage(task)} Status: ${getStatus(task)}`);
+    }
+
+    function removeTask(index) {
+      const task = tasks[index];
+      if (!task) {
+        setMessage("Invalid index.");
+        return;
+      }
+
+      if (!canBeRemoved(task)) {
+        setMessage("Cannot remove task because it already has a note/status.");
+        return;
+      }
+
+      tasks.splice(index, 1);
+      renderTasks();
+      setMessage("Task removed.");
+    }
+
+    function clearFinishedTasks() {
+      const before = tasks.length;
+      const unfinished = tasks.filter(task => !task.isDone);
+      const removed = before - unfinished.length;
+      tasks.length = 0;
+      tasks.push(...unfinished);
+      renderTasks();
+
+      if (removed === 0) {
+        setMessage("No finished tasks to clear.");
+      } else {
+        setMessage(`${removed} finished tasks cleared.`);
+      }
+    }
+
+    updateDynamicForm();
+    renderTasks();
+  </script>
+</body>
+</html>
